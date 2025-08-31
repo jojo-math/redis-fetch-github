@@ -12,8 +12,8 @@ client.connect().catch(console.error);
 const app = express();
 
 // Set response
-function setResponse(username, repos) {
-  return `<h2>${username} has ${repos} Github repos</h2>`;
+function setResponse(username, repos, rep) {
+  return `<h2>${username} has ${repos} Github repos : </h2><hr>${rep}`;
 }
 
 // Make request to Github for data
@@ -22,13 +22,16 @@ async function getRepos(req, res, next) {
     console.log('Fetching Data...');
     const { username } = req.params;
     const response = await fetch(`https://api.github.com/users/${username}`);
+    const rep_repos = await fetch(`https://api.github.com/users/${username}/repos`);
     const data = await response.json();
+    const rep_data = await rep_repos.json();
     const repos = data.public_repos;
+    const rep = rep_data.map(repo => `<p><a href="${repo.html_url}">${repo.name}</a></p>`).join('');
 
-    // Set data to Redis
-    await client.setEx(username, 3600, repos.toString());
+    // Set data to Redis (serialize repos and rep together)
+    await client.setEx(username, 3600, JSON.stringify({ repos, rep }));
 
-    res.send(setResponse(username, repos));
+    res.send(setResponse(username, repos, rep));
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -41,7 +44,9 @@ async function cache(req, res, next) {
   try {
     const data = await client.get(username);
     if (data !== null) {
-      res.send(setResponse(username, data));
+      // Deserialize repos and rep from cache
+      const { repos, rep } = JSON.parse(data);
+      res.send(setResponse(username, repos, rep));
     } else {
       next();
     }
