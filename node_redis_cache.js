@@ -1,8 +1,9 @@
 const express = require('express');
 //const fetch = require('node-fetch');
 const { createClient } = require('redis');
-
+//configuration du port serveur : 5000
 const PORT = process.env.PORT || 5000;
+// configuration du port redis
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
 const client = createClient({ url: `redis://localhost:${REDIS_PORT}` });
@@ -11,7 +12,7 @@ client.connect().catch(console.error);
 
 const app = express();
 
-// Set response
+// Set response : retourne une vue html pour afficher le resultat
 function setResponse(username, repos, rep) {
   return `<h2>${username} has ${repos} Github repos : </h2><hr>${rep}`;
 }
