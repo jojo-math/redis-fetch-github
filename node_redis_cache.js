@@ -5,7 +5,7 @@ const { createClient } = require('redis');
 const PORT = process.env.PORT || 5000;
 // configuration du port redis
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
-
+//url d'acces au donnees sauvegardees temporairement sur Redis
 const client = createClient({ url: `redis://localhost:${REDIS_PORT}` });
 
 client.connect().catch(console.error);
@@ -20,6 +20,7 @@ function setResponse(username, repos, rep) {
 // Make request to Github for data
 async function getRepos(req, res, next) {
   try {
+    // tentative de recuperation des donnees
     console.log('Fetching Data...');
     const { username } = req.params;
     const response = await fetch(`https://api.github.com/users/${username}`);
