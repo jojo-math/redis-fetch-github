@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 //url d'acces au donnees sauvegardees temporairement sur Redis
 const client = createClient({ url: `redis://localhost:${REDIS_PORT}` });
-
+//le client se connecte, s'il y'a une erreur, elle est capturee et retournee dans les logs
 client.connect().catch(console.error);
 
 const app = express();
