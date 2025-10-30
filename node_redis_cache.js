@@ -25,6 +25,7 @@ async function getRepos(req, res, next) {
     const { username } = req.params;
     //methode asynchrone pour recuperer le nom de l'utilisateur
     const response = await fetch(`https://api.github.com/users/${username}`);
+    //methode asynchrone pour recuperer la liste des depots de l'utilisateur
     const rep_repos = await fetch(`https://api.github.com/users/${username}/repos`);
     const data = await response.json();
     const rep_data = await rep_repos.json();
