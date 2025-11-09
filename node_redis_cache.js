@@ -27,6 +27,7 @@ async function getRepos(req, res, next) {
     const response = await fetch(`https://api.github.com/users/${username}`);
     //methode asynchrone pour recuperer la liste des depots de l'utilisateur
     const rep_repos = await fetch(`https://api.github.com/users/${username}/repos`);
+    //attente des donnees avec une recuperation sur la methode asynchrone
     const data = await response.json();
     const rep_data = await rep_repos.json();
     const repos = data.public_repos;
